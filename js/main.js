@@ -31,6 +31,11 @@ numsAndOperators.forEach((button) => {
   });
 });
 
+ce.addEventListener("click", () => {
+  displayValue = "";
+  screen.textContent = displayValue;
+});
+
 function add(a, b) {
   return a + b;
 }
