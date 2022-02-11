@@ -1,0 +1,29 @@
+* {
+  box-sizing: border-box;
+}
+
+button {
+  height: 40px;
+  width: 50px;
+}
+
+#calculator {
+  height: 300px;
+  width: 300px;
+  background: gray;
+}
+
+#screen {
+  height: 35px;
+  width: 100%;
+  background: gainsboro;
+}
+
+#buttons {
+  display: flex;
+}
+
+#buttons .btn-col {
+  display: flex;
+  flex-direction: column;
+}
