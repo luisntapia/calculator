@@ -21,6 +21,16 @@ const addition = document.getElementById("addition");
 const ce = document.getElementById("clear");
 const equals = document.getElementById("equals");
 
+const numsAndOperators = document.querySelectorAll(".num, .opr");
+
+numsAndOperators.forEach((button) => {
+  button.addEventListener("click", () => {
+    const value = button.textContent;
+    displayValue += value;
+    screen.textContent = displayValue;
+  });
+});
+
 function add(a, b) {
   return a + b;
 }
