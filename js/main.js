@@ -25,8 +25,42 @@ const numsAndOperators = document.querySelectorAll(".num, .opr");
 
 numsAndOperators.forEach((button) => {
   button.addEventListener("click", () => {
+    const lastItem = selectLastItem(displayValue);
+    const penultimalItem = selectLastItem(displayValue, 2);
     const value = button.textContent;
-    displayValue += value;
+    // validate space or not
+    const spaceNeeded =
+      isMultOrDiv(lastItem) ||
+      isOperator(value) ||
+      (isAddOrSub(lastItem) &&
+        !isAddOrSub(penultimalItem) &&
+        !(isNum(value) && isAddOrSub(lastItem) && isMultOrDiv(penultimalItem)));
+
+    const validInput =
+      value.match(/\d*\.?\d+/) ||
+      (/\./.test(value) && !lastItem.includes(".")) ||
+      (isAddOrSub(value) && (isNum(lastItem) || isMultOrDiv(lastItem))) ||
+      (isMultOrDiv(value) && isNum(lastItem));
+
+    const replaceInput =
+      ((isMultOrDiv(lastItem) || /\+/.test(lastItem)) &&
+        (isMultOrDiv(value) || /\+/.test(value)) &&
+        !isMultOrDiv(penultimalItem)) ||
+      (/\-/.test(lastItem) &&
+        isOperator(value) &&
+        !isMultOrDiv(penultimalItem));
+
+    if (!validInput) {
+      if (replaceInput) {
+        displayValue = replaceLastItem(displayValue, value);
+      } else {
+        return;
+      }
+    } else {
+      if (spaceNeeded) displayValue += " ";
+      displayValue += value;
+    }
+
     screen.textContent = displayValue;
   });
 });
@@ -36,6 +70,41 @@ ce.addEventListener("click", () => {
   screen.textContent = displayValue;
 });
 
+// selection
+function selectLastItem(str, negativeIndex = 1) {
+  if (!str) return "";
+  const regex = /[^ ]+/g;
+  const items = str.match(regex);
+  return items[items.length - negativeIndex];
+}
+
+function replaceLastItem(str, replacement) {
+  let newStr;
+  const replaced = selectLastItem(str);
+  newStr = str.slice(0, str.length - replaced.length);
+  newStr += replacement;
+  return newStr;
+}
+
+// validation
+function isOperator(str) {
+  const operators = ["+", "-", "x", "*", "÷", "/"];
+  return operators.includes(str);
+}
+
+function isAddOrSub(opr) {
+  return opr === "+" || opr === "-";
+}
+
+function isMultOrDiv(opr) {
+  return opr === "x" || opr === "*" || opr === "÷" || opr === "/";
+}
+
+function isNum(str) {
+  const regex = /\d*\.?\d+/;
+  return regex.test(str);
+}
+// operations
 function add(a, b) {
   return a + b;
 }
