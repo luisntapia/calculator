@@ -19,6 +19,12 @@ button {
   background: gainsboro;
 }
 
+#operation {
+  height: 35px;
+  width: 100%;
+  background: pink;
+}
+
 #buttons {
   display: flex;
 }
