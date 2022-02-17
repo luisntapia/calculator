@@ -1,5 +1,6 @@
 // display
 let displayValue = "";
+const operation = document.getElementById("operation");
 const screen = document.getElementById("screen");
 // numbers
 const zero = document.getElementById("zero");
@@ -67,7 +68,13 @@ numsAndOperators.forEach((button) => {
 
 ce.addEventListener("click", () => {
   displayValue = "";
+  operation.textContent = displayValue;
   screen.textContent = displayValue;
+});
+
+equals.addEventListener("click", () => {
+  operation.textContent = screen.textContent + " =";
+  screen.textContent = solveStrOperation(screen.textContent);
 });
 
 // selection
@@ -134,4 +141,31 @@ function operate(op, num1, num2) {
     default:
       return "ERROR: invalid operator";
   }
+}
+
+function solveStrOperation(strOp) {
+  const regex = /[^ ]+/g;
+  const items = strOp.match(regex);
+  let currentOp = "";
+  let result;
+  for (let i = 0; i < items.length; i++) {
+    currentOp += " " + items[i] + " ";
+    const currentOpElements = currentOp.match(regex);
+    if (currentOpElements.length === 3) {
+      const num1 = Number(currentOpElements[0]);
+      const num2 = Number(currentOpElements[2]);
+      let operator = currentOpElements[1];
+      switch (operator) {
+        case "x":
+          operator = "*";
+          break;
+        case "÷":
+          operator = "/";
+          break;
+      }
+      result = operate(operator, num1, num2);
+      currentOp = String(result);
+    }
+  }
+  return result;
 }
