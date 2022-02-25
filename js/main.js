@@ -1,5 +1,13 @@
 // display
-let displayValue = "";
+
+let lastBtn;
+let lastNum;
+let lastOp;
+let currOp = "";
+let total = 0;
+const inputList = [];
+const masterList = [];
+
 const operation = document.getElementById("operation");
 const screen = document.getElementById("screen");
 // numbers
@@ -23,58 +31,91 @@ const ce = document.getElementById("clear");
 const equals = document.getElementById("equals");
 
 const numsAndOperators = document.querySelectorAll(".num, .opr");
+const operators = document.querySelectorAll(".opr");
+const nums = document.querySelectorAll(".num");
+const calcBtns = document.querySelectorAll("#calculator button");
 
-numsAndOperators.forEach((button) => {
+calcBtns.forEach((button) => {
   button.addEventListener("click", () => {
-    const lastItem = selectLastItem(displayValue);
-    const penultimalItem = selectLastItem(displayValue, 2);
-    const value = button.textContent;
-    // validate space or not
-    const spaceNeeded =
-      isMultOrDiv(lastItem) ||
-      isOperator(value) ||
-      (isAddOrSub(lastItem) &&
-        !isAddOrSub(penultimalItem) &&
-        !(isNum(value) && isAddOrSub(lastItem) && isMultOrDiv(penultimalItem)));
-
-    const validInput =
-      value.match(/\d*\.?\d+/) ||
-      (/\./.test(value) && !lastItem.includes(".")) ||
-      (isAddOrSub(value) && (isNum(lastItem) || isMultOrDiv(lastItem))) ||
-      (isMultOrDiv(value) && isNum(lastItem));
-
-    const replaceInput =
-      ((isMultOrDiv(lastItem) || /\+/.test(lastItem)) &&
-        (isMultOrDiv(value) || /\+/.test(value)) &&
-        !isMultOrDiv(penultimalItem)) ||
-      (/\-/.test(lastItem) &&
-        isOperator(value) &&
-        !isMultOrDiv(penultimalItem));
-
-    if (!validInput) {
-      if (replaceInput) {
-        displayValue = replaceLastItem(displayValue, value);
-      } else {
-        return;
-      }
-    } else {
-      if (spaceNeeded) displayValue += " ";
-      displayValue += value;
+    if (!validateOperationList(inputList)) {
+      debugger;
     }
-
-    screen.textContent = displayValue;
   });
 });
 
-ce.addEventListener("click", () => {
-  displayValue = "";
-  operation.textContent = displayValue;
-  screen.textContent = displayValue;
-});
+ce.addEventListener("click", resetCalc);
 
-equals.addEventListener("click", () => {
-  operation.textContent = screen.textContent + " =";
-  screen.textContent = solveStrOperation(screen.textContent);
+calcBtns.forEach((button) => {
+  button.addEventListener("click", () => {
+    const btnTxt = button.textContent;
+    if (screen.textContent === "0" && isNum(btnTxt)) {
+      screen.textContent = btnTxt;
+    } else if (total === 0 && screen.textContent === "") {
+      if (isNum(btnTxt) || btnTxt === "-") {
+        screen.textContent += btnTxt;
+      }
+    } else if (isNum(btnTxt)) {
+      if (lastBtn === "=") {
+        resetCalc();
+        screen.textContent = btnTxt;
+      } else if (isNum(lastBtn) || screen.textContent === "-") {
+        screen.textContent += btnTxt;
+      } else if (isOperator(lastBtn)) {
+        screen.textContent = btnTxt;
+        inputList.push(convertOperator(lastBtn));
+      }
+    } else if (isOperator(btnTxt)) {
+      if (btnTxt === "-" && lastBtn === "=") {
+        // return;
+      } else if (btnTxt === "-" && isOperator(lastBtn)) {
+        // return;
+      } else if (btnTxt === "-" && isOperator(lastBtn)) {
+        inputList.push(lastBtn);
+        screen.textContent = btnTxt;
+      } else if (screen.textContent === "" || screen.textContent === "-") {
+        // return;
+      } else if (isOperator(lastBtn) || lastBtn === "=") {
+        // return;
+      } else {
+        inputList.push(Number(screen.textContent));
+        total = operateList(inputList);
+      }
+    } else if (btnTxt === ".") {
+      if (lastBtn === "=") {
+        resetCalc();
+        screen.textContent = "0.";
+      } else if (screen.textContent.includes(".")) {
+        return;
+      } else if (screen.textContent === "-" || screen.textContent === "") {
+        screen.textContent += "0.";
+      } else {
+        screen.textContent += btnTxt;
+      }
+    } else if (btnTxt === "=") {
+      if (lastBtn === "=" || isOperator(lastBtn)) {
+        // return;
+      } else if (screen.textContent === "" || screen.textContent === "-") {
+        // return;
+      } else {
+        inputList.push(Number(screen.textContent));
+        total = operateList(inputList);
+        screen.textContent = total;
+      }
+    }
+    //
+    if (isNum(btnTxt)) {
+      lastNum = btnTxt;
+    } else {
+      lastOp = btnTxt;
+    }
+
+    lastBtn = btnTxt;
+    if (isNum(btnTxt)) {
+      masterList.push(Number(btnTxt));
+    } else {
+      masterList.push(btnTxt);
+    }
+  });
 });
 
 // selection
@@ -155,17 +196,60 @@ function solveStrOperation(strOp) {
       const num1 = Number(currentOpElements[0]);
       const num2 = Number(currentOpElements[2]);
       let operator = currentOpElements[1];
-      switch (operator) {
-        case "x":
-          operator = "*";
-          break;
-        case "÷":
-          operator = "/";
-          break;
-      }
+      operator = convertOperator(operator);
       result = operate(operator, num1, num2);
       currentOp = String(result);
     }
   }
   return result;
+}
+
+function convertOperator(op) {
+  if (/[x*]/.test(op)) {
+    return "*";
+  } else if (/[÷/]/.test(op)) {
+    return "/";
+  } else if (op === "+" || op === "-") {
+    return op;
+  }
+}
+
+function operateList(arr) {
+  let total = 0;
+  let operator;
+
+  if (!validateOperationList(arr)) {
+    return "ERROR: invalid array";
+  }
+  for (let i = 0; i < arr.length; i++) {
+    if (i === 0) {
+      total = arr[i];
+    } else if (typeof arr[i] === "string") {
+      operator = convertOperator(arr[i]);
+    } else if (typeof arr[i] === "number") {
+      total = operate(operator, total, arr[i]);
+    }
+  }
+
+  return total;
+}
+
+function validateOperationList(arr) {
+  for (let i = 0; i < arr.length; i++) {
+    if (i % 2 === 0 && !isNum(arr[i]) && typeof arr[i] !== "number") {
+      return false;
+    }
+    if (i % 2 === 1 && !isOperator(arr[i])) {
+      return false;
+    }
+  }
+  return true;
+}
+
+function resetCalc() {
+  operation.textContent = "";
+  screen.textContent = "";
+  inputList.length = 0;
+  total = 0;
+  lastBtn = undefined;
 }
