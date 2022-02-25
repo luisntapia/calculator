@@ -1,5 +1,4 @@
-// display
-
+// track
 let lastBtn;
 let lastNum;
 let lastOp;
@@ -8,6 +7,7 @@ let total = 0;
 const inputList = [];
 const masterList = [];
 
+// display
 const operation = document.getElementById("operation");
 const screen = document.getElementById("screen");
 // numbers
@@ -26,13 +26,12 @@ const division = document.getElementById("division");
 const multiplication = document.getElementById("multiplication");
 const subtraction = document.getElementById("subtraction");
 const addition = document.getElementById("addition");
+
 // actions
 const ce = document.getElementById("clear");
 const equals = document.getElementById("equals");
 
-const numsAndOperators = document.querySelectorAll(".num, .opr");
-const operators = document.querySelectorAll(".opr");
-const nums = document.querySelectorAll(".num");
+// groups
 const calcBtns = document.querySelectorAll("#calculator button");
 
 calcBtns.forEach((button) => {
@@ -118,22 +117,6 @@ calcBtns.forEach((button) => {
   });
 });
 
-// selection
-function selectLastItem(str, negativeIndex = 1) {
-  if (!str) return "";
-  const regex = /[^ ]+/g;
-  const items = str.match(regex);
-  return items[items.length - negativeIndex];
-}
-
-function replaceLastItem(str, replacement) {
-  let newStr;
-  const replaced = selectLastItem(str);
-  newStr = str.slice(0, str.length - replaced.length);
-  newStr += replacement;
-  return newStr;
-}
-
 // validation
 function isOperator(str) {
   const operators = ["+", "-", "x", "*", "÷", "/"];
@@ -182,26 +165,6 @@ function operate(op, num1, num2) {
     default:
       return "ERROR: invalid operator";
   }
-}
-
-function solveStrOperation(strOp) {
-  const regex = /[^ ]+/g;
-  const items = strOp.match(regex);
-  let currentOp = "";
-  let result;
-  for (let i = 0; i < items.length; i++) {
-    currentOp += " " + items[i] + " ";
-    const currentOpElements = currentOp.match(regex);
-    if (currentOpElements.length === 3) {
-      const num1 = Number(currentOpElements[0]);
-      const num2 = Number(currentOpElements[2]);
-      let operator = currentOpElements[1];
-      operator = convertOperator(operator);
-      result = operate(operator, num1, num2);
-      currentOp = String(result);
-    }
-  }
-  return result;
 }
 
 function convertOperator(op) {
