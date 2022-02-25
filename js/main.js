@@ -87,6 +87,9 @@ calcBtns.forEach((button) => {
         return;
       } else if (screen.textContent === "-" || screen.textContent === "") {
         screen.textContent += "0.";
+      } else if (isOperator(lastBtn)) {
+        screen.textContent = "0.";
+        inputList.push(convertOperator(lastBtn));
       } else {
         screen.textContent += btnTxt;
       }
