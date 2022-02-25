@@ -29,25 +29,22 @@ const addition = document.getElementById("addition");
 
 // actions
 const ac = document.getElementById("clear");
+const del = document.getElementById("backspace");
 const equals = document.getElementById("equals");
 
 // groups
 const calcBtns = document.querySelectorAll("#calculator button");
 
-calcBtns.forEach((button) => {
-  button.addEventListener("click", () => {
-    if (!validateOperationList(inputList)) {
-      debugger;
-    }
-  });
-});
-
 ac.addEventListener("click", resetCalc);
+del.addEventListener("click", () => {
+  screen.textContent = screen.textContent.slice(0, -1);
+});
 
 calcBtns.forEach((button) => {
   button.addEventListener("click", () => {
     const btnTxt = button.textContent;
-    if (screen.textContent === "0" && isNum(btnTxt)) {
+    if (screen.textContent === "0" && isNum(btnTxt) && !isOperator(lastBtn)) {
+      resetCalc();
       screen.textContent = btnTxt;
     } else if (total === 0 && screen.textContent === "") {
       if (isNum(btnTxt) || btnTxt === "-") {
@@ -116,6 +113,14 @@ calcBtns.forEach((button) => {
       masterList.push(Number(btnTxt));
     } else {
       masterList.push(btnTxt);
+    }
+  });
+});
+
+calcBtns.forEach((button) => {
+  button.addEventListener("click", () => {
+    if (!validateOperationList(inputList)) {
+      debugger;
     }
   });
 });
