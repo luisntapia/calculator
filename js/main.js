@@ -28,7 +28,7 @@ const subtraction = document.getElementById("subtraction");
 const addition = document.getElementById("addition");
 
 // actions
-const ce = document.getElementById("clear");
+const ac = document.getElementById("clear");
 const equals = document.getElementById("equals");
 
 // groups
@@ -42,7 +42,7 @@ calcBtns.forEach((button) => {
   });
 });
 
-ce.addEventListener("click", resetCalc);
+ac.addEventListener("click", resetCalc);
 
 calcBtns.forEach((button) => {
   button.addEventListener("click", () => {
