@@ -125,6 +125,49 @@ calcBtns.forEach((button) => {
   });
 });
 
+window.addEventListener("keydown", clickBtnFromKeyboard);
+
+function clickBtnFromKeyboard(e) {
+  const key = e.key;
+  if (key === "0") {
+    zero.click();
+  } else if (key === "1") {
+    one.click();
+  } else if (key === "2") {
+    two.click();
+  } else if (key === "3") {
+    three.click();
+  } else if (key === "4") {
+    four.click();
+  } else if (key === "5") {
+    five.click();
+  } else if (key === "6") {
+    six.click();
+  } else if (key === "7") {
+    seven.click();
+  } else if (key === "8") {
+    eight.click();
+  } else if (key === "9") {
+    nine.click();
+  } else if (key === ".") {
+    decimal.click();
+  } else if (e.ctrlKey && key === "Backspace") {
+    ac.click();
+  } else if (key === "Backspace") {
+    del.click();
+  } else if (key === "/") {
+    division.click();
+  } else if (key === "*") {
+    multiplication.click();
+  } else if (key === "+") {
+    addition.click();
+  } else if (key === "-") {
+    subtraction.click();
+  } else if (key === "Enter" || key === "=") {
+    equals.click();
+  }
+}
+
 // validation
 function isOperator(str) {
   const operators = ["+", "-", "x", "*", "÷", "/"];
