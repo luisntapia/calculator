@@ -43,16 +43,25 @@ button {
   display: flex;
   margin-top: 10px;
   justify-content: center;
+  flex-direction: column;
 }
 
-#buttons .btn-col {
+#buttons .btn-row {
   display: flex;
-  flex-direction: column;
 }
 
 #buttons button {
   height: 60px;
   width: 80px;
   font-size: 20px;
-  margin: 6.5px;
+  margin: 5px;
+}
+
+#buttons .btn-row:nth-child(1) button:nth-child(1),
+#buttons .btn-row:nth-child(1) button:nth-child(2) {
+  flex-grow: 2;
+}
+
+#buttons .btn-row:nth-child(5) button:nth-child(1) {
+  flex-grow: 2;
 }
