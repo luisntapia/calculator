@@ -4,6 +4,8 @@
 
 h1 {
   text-align: center;
+  margin: 20px;
+  font-size: 28px;
 }
 
 button {
@@ -12,9 +14,10 @@ button {
 }
 
 #calculator {
-  height: 300px;
-  width: 300px;
+  height: 500px;
+  width: 400px;
   background: gray;
+  padding: 20px;
 
   position: absolute;
   top: 50%;
@@ -22,23 +25,34 @@ button {
   transform: translate(-50%, -50%);
 }
 
-#screen {
-  height: 35px;
-  width: 100%;
-  background: gainsboro;
-}
-
 #operation {
   height: 35px;
   width: 100%;
   background: pink;
+  font-size: 20px;
+}
+
+#screen {
+  height: 55px;
+  width: 100%;
+  background: gainsboro;
+  font-size: 35px;
 }
 
 #buttons {
   display: flex;
+  margin-top: 10px;
+  justify-content: center;
 }
 
 #buttons .btn-col {
   display: flex;
   flex-direction: column;
+}
+
+#buttons button {
+  height: 60px;
+  width: 80px;
+  font-size: 20px;
+  margin: 6.5px;
 }
