@@ -2,10 +2,16 @@
   box-sizing: border-box;
 }
 
+body {
+  background: rgb(243, 229, 201);
+}
+
 h1 {
   text-align: center;
   margin: 20px;
   font-size: 28px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: 700;
 }
 
 button {
@@ -23,13 +29,16 @@ button {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+
+  border-radius: 12px;
 }
 
 #operation {
   height: 35px;
   width: 100%;
-  background: pink;
+  background: rgb(197, 197, 197);
   font-size: 20px;
+  font-family: monospace;
 }
 
 #screen {
@@ -37,6 +46,7 @@ button {
   width: 100%;
   background: gainsboro;
   font-size: 35px;
+  font-family: monospace;
 }
 
 #buttons {
@@ -64,4 +74,20 @@ button {
 
 #buttons .btn-row:nth-child(5) button:nth-child(1) {
   flex-grow: 2;
+}
+
+#buttons #clear {
+  background: #ee9999;
+}
+
+#buttons #backspace {
+  background: #9999ee;
+}
+
+#buttons .opr {
+  background: papayawhip;
+}
+
+#buttons #equals {
+  background: rgb(255, 225, 178);
 }
