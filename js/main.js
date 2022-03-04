@@ -4,6 +4,7 @@ let lastNum;
 let lastOp;
 let currOp = "";
 let total = 0;
+let isDebugging = false;
 const inputList = [];
 const masterList = [];
 
@@ -126,6 +127,42 @@ calcBtns.forEach((button) => {
 });
 
 window.addEventListener("keydown", clickBtnFromKeyboard);
+
+function clickerPromise() {
+  return new Promise((resolve, reject) => {
+    if (isDebugging) {
+      resolve("Ready to click");
+    } else {
+      reject("Clicking stopped");
+    }
+  });
+}
+
+function clickRandomBtns() {
+  if (isDebugging) return "Already debugging";
+  isDebugging = true;
+  clickerPromise()
+    .then((message) => {
+      console.log(message);
+      const clickEvent = new CustomEvent("click");
+      while (isDebugging) {
+        const randomInt = getRandomInt(calcBtns.length);
+        const randomBtn = calcBtns[randomInt];
+        randomBtn.dispatchEvent(clickEvent);
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+}
+
+function stopRandomClicking() {
+  if (isDebugging) {
+    isDebugging = false;
+  } else {
+    return "Already stopped";
+  }
+}
 
 function clickBtnFromKeyboard(e) {
   const key = e.key;
@@ -266,4 +303,8 @@ function resetCalc() {
   inputList.length = 0;
   total = 0;
   lastBtn = undefined;
+}
+
+function getRandomInt(max) {
+  return Math.floor(Math.random() * max);
 }
