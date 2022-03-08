@@ -24,13 +24,12 @@ button {
   width: 400px;
   background: gray;
   padding: 20px;
-
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-
   border-radius: 12px;
+  text-align: right;
 }
 
 #operation {
@@ -39,6 +38,7 @@ button {
   background: rgb(197, 197, 197);
   font-size: 20px;
   font-family: monospace;
+  text-align: right;
 }
 
 #screen {
