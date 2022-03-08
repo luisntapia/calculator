@@ -1,12 +1,7 @@
+"use strict";
+
 // track
-let lastBtn;
-let lastNum;
-let lastOp;
-let currOp = "";
-let total = 0;
 let isDebugging = false;
-const inputList = [];
-const masterList = [];
 
 // display
 const operation = document.getElementById("operation");
@@ -22,6 +17,7 @@ const six = document.getElementById("six");
 const seven = document.getElementById("seven");
 const eight = document.getElementById("eight");
 const nine = document.getElementById("nine");
+const decimal = document.getElementById("decimal");
 // operators
 const division = document.getElementById("division");
 const multiplication = document.getElementById("multiplication");
@@ -36,6 +32,20 @@ const equals = document.getElementById("equals");
 // groups
 const calcBtns = document.querySelectorAll("#calculator button");
 
+// operations
+let result = 0;
+let firstOperand = 0;
+let secondOperand = 0;
+let operator = "";
+let operandState = "adding_first";
+
+// regexes
+const DOT = /\./;
+const DIGIT = /[0-9]/;
+const NEGATIVE = /\-/;
+const OPERATOR = /[\+\-x\*÷]/;
+const EQUALS = /=/;
+
 ac.addEventListener("click", resetCalc);
 del.addEventListener("click", () => {
   screen.textContent = screen.textContent.slice(0, -1);
@@ -43,85 +53,92 @@ del.addEventListener("click", () => {
 
 calcBtns.forEach((button) => {
   button.addEventListener("click", () => {
-    const btnTxt = button.textContent;
-    if (screen.textContent === "0" && isNum(btnTxt) && !isOperator(lastBtn)) {
-      resetCalc();
-      screen.textContent = btnTxt;
-    } else if (total === 0 && screen.textContent === "") {
-      if (isNum(btnTxt) || btnTxt === "-") {
-        screen.textContent += btnTxt;
-      }
-    } else if (isNum(btnTxt)) {
-      if (lastBtn === "=") {
-        resetCalc();
-        screen.textContent = btnTxt;
-      } else if (isNum(lastBtn) || screen.textContent === "-") {
-        screen.textContent += btnTxt;
-      } else if (isOperator(lastBtn)) {
-        screen.textContent = btnTxt;
-        inputList.push(convertOperator(lastBtn));
-      }
-    } else if (isOperator(btnTxt)) {
-      if (btnTxt === "-" && lastBtn === "=") {
-        // return;
-      } else if (btnTxt === "-" && isOperator(lastBtn)) {
-        // return;
-      } else if (btnTxt === "-" && isOperator(lastBtn)) {
-        inputList.push(lastBtn);
-        screen.textContent = btnTxt;
-      } else if (screen.textContent === "" || screen.textContent === "-") {
-        // return;
-      } else if (isOperator(lastBtn) || lastBtn === "=") {
-        // return;
-      } else {
-        inputList.push(Number(screen.textContent));
-        total = operateList(inputList);
-      }
-    } else if (btnTxt === ".") {
-      if (lastBtn === "=") {
-        resetCalc();
-        screen.textContent = "0.";
-      } else if (screen.textContent.includes(".")) {
-        return;
-      } else if (screen.textContent === "-" || screen.textContent === "") {
-        screen.textContent += "0.";
-      } else if (isOperator(lastBtn)) {
-        screen.textContent = "0.";
-        inputList.push(convertOperator(lastBtn));
-      } else {
-        screen.textContent += btnTxt;
-      }
-    } else if (btnTxt === "=") {
-      if (lastBtn === "=" || isOperator(lastBtn)) {
-        // return;
-      } else if (screen.textContent === "" || screen.textContent === "-") {
-        // return;
-      } else {
-        inputList.push(Number(screen.textContent));
-        total = operateList(inputList);
-        screen.textContent = total;
-      }
-    }
-    //
-    if (isNum(btnTxt)) {
-      lastNum = btnTxt;
-    } else {
-      lastOp = btnTxt;
-    }
+    const input = button.textContent;
+    switch (operandState) {
+      case "adding_first":
+        if (screen.textContent === "0" || screen.textContent === "") {
+          if (DIGIT.test(input) || NEGATIVE.test(input) || DOT.test(input)) {
+            if (DIGIT.test(input) || NEGATIVE.test(input)) {
+              screen.textContent = input;
+            } else if (DOT.test(input)) {
+              screen.textContent = "0.";
+            }
+          }
+        } else if (DIGIT.test(input) || DOT.test(input)) {
+          if (DOT.test(input)) {
+            if (screen.textContent.includes(".")) {
+              return;
+            } else {
+              screen.textContent += ".";
+            }
+          } else if (DIGIT.test(input)) {
+            screen.textContent += input;
+          }
+        } else if (OPERATOR.test(input)) {
+          const screenValue = Number(screen.textContent);
+          firstOperand = screenValue;
+          operator = convertOperator(input);
+          operandState = "waiting_second";
+        }
+        break;
+      case "waiting_second":
+        if (OPERATOR.test(input)) {
+          operator = convertOperator(input);
+        } else if (DIGIT.test(input) || DOT.test(input)) {
+          if (DOT.test(input)) {
+            screen.textContent = "0.1";
+          } else if (DIGIT.test(input)) {
+            screen.textContent = input;
+          }
+          operandState = "adding_second";
+        }
+        break;
+      case "adding_second":
+        if (screen.textContent === "0" || screen.textContent === "") {
+          if (DIGIT.test(input) || NEGATIVE.test(input) || DOT.test(input)) {
+            if (DIGIT.test(input) || NEGATIVE.test(input)) {
+              screen.textContent = input;
+            } else if (DOT.test(input)) {
+              screen.textContent = "0.";
+            }
+          }
+        } else if (DIGIT.test(input) || DOT.test(input)) {
+          if (DOT.test(input)) {
+            if (screen.textContent.includes(".")) {
+              return;
+            } else {
+              screen.textContent += ".";
+            }
+          } else if (DIGIT.test(input)) {
+            screen.textContent += input;
+          }
+        } else if (OPERATOR.test(input) || EQUALS.test(input)) {
+          secondOperand = Number(screen.textContent);
+          const result = operate(operator, firstOperand, secondOperand);
+          screen.textContent = result;
+          operation.textContent = `${firstOperand} ${operator} ${secondOperand} =`;
+          firstOperand = result;
 
-    lastBtn = btnTxt;
-    if (isNum(btnTxt)) {
-      masterList.push(Number(btnTxt));
-    } else {
-      masterList.push(btnTxt);
-    }
-  });
-});
-
-calcBtns.forEach((button) => {
-  button.addEventListener("click", () => {
-    if (!validateOperationList(inputList)) {
-      debugger;
+          if (OPERATOR.test(input)) {
+            operandState = "waiting_second";
+          } else if (EQUALS.test(input)) {
+            operandState = "result_displayed";
+          }
+        }
+        break;
+      case "result_displayed":
+        if (OPERATOR.test(input)) {
+          operator = convertOperator(input);
+          operandState = "waiting_second";
+        } else if (DIGIT.test(input) || DOT.test(input)) {
+          if (DIGIT.test(input)) {
+            screen.textContent = input;
+          } else if (DOT.test(input)) {
+            screen.textContent = "0.";
+          }
+          operandState = "adding_first";
+        }
+        break;
     }
   });
 });
@@ -136,32 +153,6 @@ function clickerPromise() {
       reject("Clicking stopped");
     }
   });
-}
-
-function clickRandomBtns() {
-  if (isDebugging) return "Already debugging";
-  isDebugging = true;
-  clickerPromise()
-    .then((message) => {
-      console.log(message);
-      const clickEvent = new CustomEvent("click");
-      while (isDebugging) {
-        const randomInt = getRandomInt(calcBtns.length);
-        const randomBtn = calcBtns[randomInt];
-        randomBtn.dispatchEvent(clickEvent);
-      }
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-}
-
-function stopRandomClicking() {
-  if (isDebugging) {
-    isDebugging = false;
-  } else {
-    return "Already stopped";
-  }
 }
 
 function clickBtnFromKeyboard(e) {
@@ -211,14 +202,6 @@ function isOperator(str) {
   return operators.includes(str);
 }
 
-function isAddOrSub(opr) {
-  return opr === "+" || opr === "-";
-}
-
-function isMultOrDiv(opr) {
-  return opr === "x" || opr === "*" || opr === "÷" || opr === "/";
-}
-
 function isNum(str) {
   const regex = /\d*\.?\d+/;
   return regex.test(str);
@@ -265,44 +248,13 @@ function convertOperator(op) {
   }
 }
 
-function operateList(arr) {
-  let total = 0;
-  let operator;
-
-  if (!validateOperationList(arr)) {
-    return "ERROR: invalid array";
-  }
-  for (let i = 0; i < arr.length; i++) {
-    if (i === 0) {
-      total = arr[i];
-    } else if (typeof arr[i] === "string") {
-      operator = convertOperator(arr[i]);
-    } else if (typeof arr[i] === "number") {
-      total = operate(operator, total, arr[i]);
-    }
-  }
-
-  return total;
-}
-
-function validateOperationList(arr) {
-  for (let i = 0; i < arr.length; i++) {
-    if (i % 2 === 0 && !isNum(arr[i]) && typeof arr[i] !== "number") {
-      return false;
-    }
-    if (i % 2 === 1 && !isOperator(arr[i])) {
-      return false;
-    }
-  }
-  return true;
-}
-
 function resetCalc() {
   operation.textContent = "";
   screen.textContent = "";
-  inputList.length = 0;
-  total = 0;
-  lastBtn = undefined;
+  firstOperand = 0;
+  secondOperand = 0;
+  operator = "";
+  operandState = "adding_first";
 }
 
 function getRandomInt(max) {
