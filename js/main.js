@@ -45,6 +45,8 @@ const DIGIT = /[0-9]/;
 const NEGATIVE = /\-/;
 const OPERATOR = /[\+\-x\*÷]/;
 const EQUALS = /=/;
+const MINUS = /-/;
+const MULT_OR_DIV = /[x\*\/÷]/;
 
 ac.addEventListener("click", resetCalc);
 del.addEventListener("click", () => {
@@ -82,9 +84,12 @@ calcBtns.forEach((button) => {
         }
         break;
       case "waiting_second":
-        if (OPERATOR.test(input)) {
+        if (MINUS.test(input) && MULT_OR_DIV.test(operator)) {
+          screen.textContent = input;
+          operandState = "adding_second";
+        } else if (OPERATOR.test(input)) {
           operator = convertOperator(input);
-        } else if (DIGIT.test(input) || DOT.test(input)) {
+        } else if (DIGIT.test(input) || DOT.test(input) || MINUS.test(input)) {
           if (DOT.test(input)) {
             screen.textContent = "0.1";
           } else if (DIGIT.test(input)) {
@@ -255,8 +260,4 @@ function resetCalc() {
   secondOperand = 0;
   operator = "";
   operandState = "adding_first";
-}
-
-function getRandomInt(max) {
-  return Math.floor(Math.random() * max);
 }
