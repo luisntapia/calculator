@@ -134,7 +134,10 @@ calcBtns.forEach((button) => {
           }
         } else if (OPERATOR.test(input) || EQUALS.test(input)) {
           secondOperand = Number(screen.textContent);
-          const result = operate(operator, firstOperand, secondOperand);
+          let result = operate(operator, firstOperand, secondOperand);
+          if (/\d\.[\d]{5,}/.test(result)) {
+            result = result.toFixed(4);
+          }
           screen.textContent = result;
           operation.textContent = `${firstOperand} ${operator} ${secondOperand} =`;
           firstOperand = result;
@@ -282,13 +285,11 @@ function resetCalc() {
 }
 
 function setAsCurrentOperator(opr) {
-  console.log("hi...");
   opr = convertOperator(opr);
   for (let i = 0; i < operators.length; i++) {
     const element = convertOperator(operators[i].textContent);
     if (element === opr) {
       operators[i].classList.add("selected-operator");
-      console.log("hii...");
     } else {
       operators[i].classList.remove("selected-operator");
     }
