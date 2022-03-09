@@ -1,8 +1,5 @@
 "use strict";
 
-// track
-let isDebugging = false;
-
 // display
 const operation = document.getElementById("operation");
 const screen = document.getElementById("screen");
