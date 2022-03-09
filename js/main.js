@@ -66,6 +66,12 @@ calcBtns.forEach((button) => {
               screen.textContent = "0.";
             }
           }
+        } else if (screen.textContent === "-") {
+          if (DIGIT.test(input) || DOT.test(input)) {
+            screen.textContent += input;
+          } else {
+            return;
+          }
         } else if (DIGIT.test(input) || DOT.test(input)) {
           if (DOT.test(input)) {
             if (screen.textContent.includes(".")) {
@@ -106,6 +112,12 @@ calcBtns.forEach((button) => {
             } else if (DOT.test(input)) {
               screen.textContent = "0.";
             }
+          }
+        } else if (screen.textContent === "-") {
+          if (DIGIT.test(input) || DOT.test(input)) {
+            screen.textContent += input;
+          } else {
+            return;
           }
         } else if (DIGIT.test(input) || DOT.test(input)) {
           if (DOT.test(input)) {
