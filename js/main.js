@@ -31,6 +31,7 @@ const equals = document.getElementById("equals");
 
 // groups
 const calcBtns = document.querySelectorAll("#calculator button");
+const operators = document.querySelectorAll("#calculator button.opr");
 
 // operations
 let result = 0;
@@ -86,6 +87,7 @@ calcBtns.forEach((button) => {
           const screenValue = Number(screen.textContent);
           firstOperand = screenValue;
           operator = convertOperator(input);
+          setAsCurrentOperator(operator);
           operandState = "waiting_second";
         }
         break;
@@ -95,6 +97,7 @@ calcBtns.forEach((button) => {
           operandState = "adding_second";
         } else if (OPERATOR.test(input)) {
           operator = convertOperator(input);
+          setAsCurrentOperator(operator);
         } else if (DIGIT.test(input) || DOT.test(input) || MINUS.test(input)) {
           if (DOT.test(input)) {
             screen.textContent = "0.1";
@@ -138,14 +141,18 @@ calcBtns.forEach((button) => {
 
           if (OPERATOR.test(input)) {
             operandState = "waiting_second";
+            setAsCurrentOperator(input);
           } else if (EQUALS.test(input)) {
             operandState = "result_displayed";
+            setAsCurrentOperator(result);
           }
         }
         break;
       case "result_displayed":
         if (OPERATOR.test(input)) {
           operator = convertOperator(input);
+          setAsCurrentOperator(operator);
+
           operandState = "waiting_second";
         } else if (DIGIT.test(input) || DOT.test(input)) {
           if (DIGIT.test(input)) {
@@ -272,4 +279,18 @@ function resetCalc() {
   secondOperand = 0;
   operator = "";
   operandState = "adding_first";
+}
+
+function setAsCurrentOperator(opr) {
+  console.log("hi...");
+  opr = convertOperator(opr);
+  for (let i = 0; i < operators.length; i++) {
+    const element = convertOperator(operators[i].textContent);
+    if (element === opr) {
+      operators[i].classList.add("selected-operator");
+      console.log("hii...");
+    } else {
+      operators[i].classList.remove("selected-operator");
+    }
+  }
 }
